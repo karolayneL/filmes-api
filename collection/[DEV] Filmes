@@ -1,0 +1,390 @@
+{
+  "info": {
+    "name": "Movies API",
+    "description": "API CRUD para gerenciamento de filmes com autenticação JWT",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://sua-api.onrender.com",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "seu_jwt_token_aqui",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "seu_user_id_aqui",
+      "type": "string"
+    },
+    {
+      "key": "movie_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth - Setup",
+      "item": [
+        {
+          "name": "⚠️ INSTRUÇÕES - Como obter JWT Token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://seu-projeto.supabase.co/auth/v1/token?grant_type=password",
+              "protocol": "https",
+              "host": ["seu-projeto", "supabase", "co"],
+              "path": ["auth", "v1", "token"],
+              "query": [
+                {
+                  "key": "grant_type",
+                  "value": "password"
+                }
+              ]
+            },
+            "description": "## Como obter o JWT Token:\n\n1. Vá para o Supabase → Authentication → Users\n2. Crie um usuário manualmente OU use a API:\n\n```javascript\n// Via JavaScript\nconst { data, error } = await supabase.auth.signInWithPassword({\n  email: 'user@example.com',\n  password: 'senha-segura'\n});\n\n// O token estará em: data.session.access_token\n```\n\n**OU use este endpoint direto:**\n\n```\nPOST https://seu-projeto.supabase.co/auth/v1/token?grant_type=password\nContent-Type: application/json\n\n{\n  \"email\": \"user@example.com\",\n  \"password\": \"sua-senha\"\n}\n```\n\n**Cole o token JWT na variável `jwt_token` e o user_id na variável `user_id`**"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            },
+            "description": "Verifica se a API está online"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Movies - CRUD",
+      "item": [
+        {
+          "name": "Listar Filmes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/movies?limit=10&offset=0&genre=Ação&min_rating=8",
+              "host": ["{{base_url}}"],
+              "path": ["movies"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                },
+                {
+                  "key": "genre",
+                  "value": "Ação"
+                },
+                {
+                  "key": "min_rating",
+                  "value": "8"
+                }
+              ]
+            },
+            "description": "Lista filmes com filtros opcionais"
+          },
+          "response": []
+        },
+        {
+          "name": "Criar Filme",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Inception\",\n  \"description\": \"Um ladrão que rouba segredos corporativos através do uso da tecnologia de compartilhamento de sonhos, é dado a tarefa inversa de plantar uma ideia na mente de um CEO.\",\n  \"release_year\": 2010,\n  \"duration\": 148,\n  \"genre\": \"Ficção Científica\",\n  \"director\": \"Christopher Nolan\",\n  \"rating\": 8.8,\n  \"user_id\": \"{{user_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/movies",
+              "host": ["{{base_url}}"],
+              "path": ["movies"]
+            },
+            "description": "Cria um novo filme\n\n**IMPORTANTE:** O user_id deve ser o mesmo do usuário autenticado"
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar Filme por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/movies/{{movie_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["movies", "{{movie_id}}"]
+            },
+            "description": "Busca um filme específico pelo ID\n\n**Dica:** Execute 'Criar Filme' primeiro para obter um ID válido"
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar Filme",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Inception (Updated)\",\n  \"rating\": 9.0,\n  \"description\": \"Descrição atualizada do filme Inception, um clássico moderno do cinema.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/movies/{{movie_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["movies", "{{movie_id}}"]
+            },
+            "description": "Atualiza um filme existente\n\n**Campos opcionais:** title, description, release_year, duration, genre, director, rating"
+          },
+          "response": []
+        },
+        {
+          "name": "Deletar Filme",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/movies/{{movie_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["movies", "{{movie_id}}"]
+            },
+            "description": "Deleta um filme permanentemente"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📋 Exemplos de Filmes",
+      "item": [
+        {
+          "name": "Criar Filme - Exemplo 1 (Ação)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"John Wick 4\",\n  \"description\": \"John Wick descobre um caminho para derrotar a Alta Mesa. Mas antes que ele possa ganhar sua liberdade, Wick deve enfrentar um novo inimigo com alianças poderosas em todo o mundo.\",\n  \"release_year\": 2023,\n  \"duration\": 169,\n  \"genre\": \"Ação\",\n  \"director\": \"Chad Stahelski\",\n  \"rating\": 7.8,\n  \"user_id\": \"{{user_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/movies"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Criar Filme - Exemplo 2 (Drama)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"O Poderoso Chefão\",\n  \"description\": \"Uma saga familiar de crime e poder que narra a transformação de Michael Corleone de relutante herdeiro à impiedoso chefão da família mafiosa.\",\n  \"release_year\": 1972,\n  \"duration\": 175,\n  \"genre\": \"Drama\",\n  \"director\": \"Francis Ford Coppola\",\n  \"rating\": 9.2,\n  \"user_id\": \"{{user_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/movies"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Criar Filme - Exemplo 3 (Ficção)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Interestelar\",\n  \"description\": \"Uma equipe de exploradores viaja através de um buraco de minhoca no espaço na tentativa de garantir a sobrevivência da humanidade.\",\n  \"release_year\": 2014,\n  \"duration\": 169,\n  \"genre\": \"Ficção Científica\",\n  "director\": \"Christopher Nolan\",\n  \"rating\": 8.6,\n  \"user_id\": \"{{user_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/movies"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔄 Test Scripts",
+      "item": [
+        {
+          "name": "Teste Completo - CRUD Flow",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Script para testar o fluxo completo CRUD",
+                  "pm.test(\"Health Check\", function() {",
+                  "    pm.sendRequest(pm.variables.get(\"base_url\") + \"/health\", function (err, response) {",
+                  "        pm.expect(err).to.be.null;",
+                  "        pm.expect(response).to.have.property('code', 200);",
+                  "    });",
+                  "});",
+                  "",
+                  "// Log para acompanhar o teste",
+                  "console.log(\"Iniciando teste completo do CRUD de filmes\");"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/movies"
+            },
+            "description": "Este request inicia o fluxo de teste completo"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Pre-request script para verificar variáveis",
+          "console.log(\"Base URL:\", pm.variables.get(\"base_url\"));",
+          "console.log(\"JWT Token presente:\", !!pm.variables.get(\"jwt_token\"));"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Testes comuns para todas as requests",
+          "pm.test(\"Status code is 200\", function () {",
+          "    pm.response.to.have.status(200);",
+          "});",
+          "",
+          "// Para requests POST bem-sucedidos, captura o movie_id",
+          "if (pm.request.method === \"POST\" && pm.response.code === 201) {",
+          "    var responseData = pm.response.json();",
+          "    if (responseData && responseData[0]) {",
+          "        var movieId = responseData[0].id;",
+          "        pm.collectionVariables.set(\"movie_id\", movieId);",
+          "        console.log(\"Movie ID salvo:\", movieId);",
+          "    }",
+          "}"
+        ]
+      }
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  }
+}
