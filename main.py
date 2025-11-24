@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Depends, Header, HTTPException, status
 from pydantic import BaseModel, Field
 import httpx
+import uvicorn
+from datetime import date
 
 load_dotenv()
 
@@ -73,7 +75,7 @@ async def health():
 
 @app.get("/movies", response_model=List[MovieOut])
 async def list_movies(
-    auth=Depends(get_user_token), 
+    auth: str = Depends(get_user_token), 
     limit: int = 50, 
     offset: int = 0, 
     genre: Optional[str] = None,
@@ -102,7 +104,7 @@ async def list_movies(
     return r.json()
 
 @app.get("/movies/{movie_id}", response_model=List[MovieOut])
-async def get_movie(movie_id: UUID, auth=Depends(get_user_token)):
+async def get_movie(movie_id: UUID, auth: str = Depends(get_user_token)):
     params = {"select": "*", "id": f"eq.{movie_id}"}
     async with httpx.AsyncClient(timeout=10) as client:
         r = await client.get(f"{POSTGREST_URL}/{TABLE}", headers=postgrest_headers(auth), params=params)
@@ -116,7 +118,7 @@ async def get_movie(movie_id: UUID, auth=Depends(get_user_token)):
     return result
 
 @app.post("/movies", response_model=List[MovieOut], status_code=201)
-async def create_movie(payload: MovieCreate, auth=Depends(get_user_token)):
+async def create_movie(payload: MovieCreate, auth: str = Depends(get_user_token)):
     async with httpx.AsyncClient(timeout=10) as client:
         r = await client.post(
             f"{POSTGREST_URL}/{TABLE}",
@@ -129,7 +131,7 @@ async def create_movie(payload: MovieCreate, auth=Depends(get_user_token)):
     return r.json()
 
 @app.put("/movies/{movie_id}", response_model=List[MovieOut])
-async def update_movie(movie_id: UUID, payload: MovieUpdate, auth=Depends(get_user_token)):
+async def update_movie(movie_id: UUID, payload: MovieUpdate, auth: str = Depends(get_user_token)):
     data = {k: v for k, v in payload.model_dump(mode="json").items() if v is not None}
     
     if not data:
@@ -152,7 +154,7 @@ async def update_movie(movie_id: UUID, payload: MovieUpdate, auth=Depends(get_us
     return result
 
 @app.delete("/movies/{movie_id}", status_code=204)
-async def delete_movie(movie_id: UUID, auth=Depends(get_user_token)):
+async def delete_movie(movie_id: UUID, auth: str = Depends(get_user_token)):
     async with httpx.AsyncClient(timeout=10) as client:
         r = await client.delete(
             f"{POSTGREST_URL}/{TABLE}",
@@ -171,7 +173,7 @@ async def delete_movie(movie_id: UUID, auth=Depends(get_user_token)):
         if not check_response:
             raise HTTPException(status_code=404, detail="Movie not found")
         return {}
-        
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
