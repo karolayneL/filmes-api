@@ -5,8 +5,6 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Depends, Header, HTTPException, status
 from pydantic import BaseModel, Field
 import httpx
-import uvicorn
-from datetime import date
 
 load_dotenv()
 
