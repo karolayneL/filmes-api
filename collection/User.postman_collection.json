@@ -1,0 +1,215 @@
+{
+	"info": {
+		"_postman_id": "327a76a0-55c9-46a3-ae86-b546d54c46f0",
+		"name": "User",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39663045",
+		"_collection_link": "https://api333-0880.postman.co/workspace/First-Workspace~7b402218-af19-41ea-a50c-9b57e86f49a5/collection/39663045-327a76a0-55c9-46a3-ae86-b546d54c46f0?action=share&source=collection_link&creator=39663045"
+	},
+	"item": [
+		{
+			"name": "Create User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status 200', ()=> pm.response.to.have.status(200));",
+							"const json = pm.response.json();",
+							"pm.expect(json).to.have.property('access_token');",
+							"pm.environment.set('access_token', json.access_token);",
+							"pm.environment.set('refresh_token', json.refresh_token);",
+							"if (json.user && json.user.id) {",
+							"  pm.environment.set('user_id', json.user.id);",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "apikey",
+						"value": "{{api_key}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"karol@email.com\",\n    \"password\": \"senhasenha\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{path}}/auth/v1/signup",
+					"host": [
+						"{{path}}"
+					],
+					"path": [
+						"auth",
+						"v1",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status 200', ()=> pm.response.to.have.status(200));",
+							"const json = pm.response.json();",
+							"pm.expect(json).to.have.property('access_token');",
+							"pm.environment.set('access_token', json.access_token);",
+							"pm.environment.set('refresh_token', json.refresh_token);",
+							"if (json.user && json.user.id) {",
+							"  pm.environment.set('user_id', json.user.id);",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "apikey",
+						"value": "{{api_key}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"karol@email.com\",\n    \"password\": \"senhasenha\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{path}}/auth/v1/token?grant_type=password",
+					"host": [
+						"{{path}}"
+					],
+					"path": [
+						"auth",
+						"v1",
+						"token"
+					],
+					"query": [
+						{
+							"key": "grant_type",
+							"value": "password"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Editar User",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "apikey",
+						"value": "{{api_key}}",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IjZpK0lTN2F6ZjZDUHdWSVUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3RienJ0Y2ZudnhremRhYXd6Ymt5LnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiI3NzBjMjM0ZS0yN2FlLTQzNTUtOWZhNS0wMTZhMjRjNzM5NmMiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzYxMjYwNjk3LCJpYXQiOjE3NjEyNTcwOTcsImVtYWlsIjoid2VsbGluZ3RvbkBlbWFpbC5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImVtYWlsIjoid2VsbGluZ3RvbkBlbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJzdWIiOiI3NzBjMjM0ZS0yN2FlLTQzNTUtOWZhNS0wMTZhMjRjNzM5NmMifSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJwYXNzd29yZCIsInRpbWVzdGFtcCI6MTc2MTI1NzA5N31dLCJzZXNzaW9uX2lkIjoiZTFjMjViYzItYTkzOC00NDhiLTkxY2UtYTYwZGIyNjNjMzY4IiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.xscReEeZG7qzE5bwnnsJVsJIu3NCJY7mn6bUGtdIzms",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"password\": \"novasenhasenha\"\n    // \"user_metadata\": {\n    //     \"name\": \"Joao\"\n    // }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{path}}/auth/v1/user",
+					"host": [
+						"{{path}}"
+					],
+					"path": [
+						"auth",
+						"v1",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "apikey",
+						"value": "{{api_key}}",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{path}}/auth/v1/logout",
+					"host": [
+						"{{path}}"
+					],
+					"path": [
+						"auth",
+						"v1",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

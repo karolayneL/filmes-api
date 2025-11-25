@@ -1,0 +1,393 @@
+{
+	"info": {
+		"_postman_id": "84a4f009-8738-4579-b473-61823f4af8e0",
+		"name": "Movies API",
+		"description": "CRUD completo de filmes (FastAPI + Supabase)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39663045",
+		"_collection_link": "https://api333-0880.postman.co/workspace/First-Workspace~7b402218-af19-41ea-a50c-9b57e86f49a5/collection/39663045-84a4f009-8738-4579-b473-61823f4af8e0?action=share&source=collection_link&creator=39663045"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{api_url}}/health",
+					"host": [
+						"{{api_url}}"
+					],
+					"path": [
+						"health"
+					]
+				},
+				"description": "Verifica se a API está funcionando"
+			},
+			"response": []
+		},
+		{
+			"name": "List Movies",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{api_url}}/movies?limit=50&offset=0",
+					"host": [
+						"{{api_url}}"
+					],
+					"path": [
+						"movies"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "50",
+							"description": "Máximo de resultados (default: 50, max: 100)"
+						},
+						{
+							"key": "offset",
+							"value": "0",
+							"description": "Offset para paginação"
+						},
+						{
+							"key": "genre",
+							"value": "",
+							"description": "Filtrar por gênero",
+							"disabled": true
+						},
+						{
+							"key": "director",
+							"value": "",
+							"description": "Filtrar por diretor",
+							"disabled": true
+						},
+						{
+							"key": "min_rating",
+							"value": "",
+							"description": "Rating mínimo (0-10)",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Lista todos os filmes (com paginação e filtros opcionais)"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Movie by ID",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{api_url}}/movies/{{movie_id}}",
+					"host": [
+						"{{api_url}}"
+					],
+					"path": [
+						"movies",
+						"{{movie_id}}"
+					]
+				},
+				"description": "Busca um filme específico por ID"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Salva o ID do filme criado para usar em outras requisições",
+							"if (pm.response.code === 201) {",
+							"    const response = pm.response.json();",
+							"    if (response && response.length > 0) {",
+							"        pm.environment.set('movie_id', response[0].id);",
+							"        console.log('movie_id salvo:', response[0].id);",
+							"    }",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Harry Potter e a Pedra Filosofal\",\n    \"description\": \"Harry Potter (Daniel Radcliffe) é um garoto órfão de 10 anos que vive infeliz com seus tios, os Dursley. Até que, repentinamente, ele recebe uma carta contendo um convite para ingressar em Hogwarts, uma famosa escola especializada em formar jovens bruxos. Inicialmente Harry é impedido de ler a carta por seu tio Válter (Richard Griffiths), mas logo ele recebe a visita de Hagrid (Robbie Coltrane), o guarda-caça de Hogwarts, que chega em sua casa para levá-lo até a escola. A partir de então Harry passa a conhecer um mundo mágico que jamais imaginara, vivendo as mais diversas aventuras com seus mais novos amigos, Rony Weasley (Rupert Grint) e Hermione Granger (Emma Watson).\",\n    \"release_year\": 2001,\n    \"duration\": 152,\n    \"genre\": \"Sci-Fi\",\n    \"director\": \"Chris Columbus \",\n    \"rating\": 7.7,\n    \"user_id\": \"{{user_id}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api_url}}/movies",
+					"host": [
+						"{{api_url}}"
+					],
+					"path": [
+						"movies"
+					]
+				},
+				"description": "Cria um novo filme. O user_id deve ser o UUID do usuário autenticado (obtido após login)."
+			},
+			"response": []
+		},
+		{
+			"name": "Update Movie",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Inception - The Beginning\",\n    \"rating\": 9.0,\n    \"description\": \"A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O. - Special Edition\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api_url}}/movies/{{movie_id}}",
+					"host": [
+						"{{api_url}}"
+					],
+					"path": [
+						"movies",
+						"{{movie_id}}"
+					]
+				},
+				"description": "Atualiza um filme existente"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Movie",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{api_url}}/movies/{{movie_id}}",
+					"host": [
+						"{{api_url}}"
+					],
+					"path": [
+						"movies",
+						"{{movie_id}}"
+					]
+				},
+				"description": "Deleta um filme"
+			},
+			"response": []
+		},
+		{
+			"name": "Filter Movies by Genre",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{api_url}}/movies?genre=Sci-Fi&limit=20",
+					"host": [
+						"{{api_url}}"
+					],
+					"path": [
+						"movies"
+					],
+					"query": [
+						{
+							"key": "genre",
+							"value": "Sci-Fi",
+							"description": "Filtrar por gênero"
+						},
+						{
+							"key": "limit",
+							"value": "20"
+						}
+					]
+				},
+				"description": "Filtra filmes por gênero"
+			},
+			"response": []
+		},
+		{
+			"name": "Filter Movies by Director",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{api_url}}/movies?director=Nolan&limit=20",
+					"host": [
+						"{{api_url}}"
+					],
+					"path": [
+						"movies"
+					],
+					"query": [
+						{
+							"key": "director",
+							"value": "Nolan",
+							"description": "Filtrar por diretor"
+						},
+						{
+							"key": "limit",
+							"value": "20"
+						}
+					]
+				},
+				"description": "Filtra filmes por diretor"
+			},
+			"response": []
+		},
+		{
+			"name": "Filter Movies by Rating",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{api_url}}/movies?min_rating=8.5&limit=20",
+					"host": [
+						"{{api_url}}"
+					],
+					"path": [
+						"movies"
+					],
+					"query": [
+						{
+							"key": "min_rating",
+							"value": "8.5",
+							"description": "Rating mínimo"
+						},
+						{
+							"key": "limit",
+							"value": "20"
+						}
+					]
+				},
+				"description": "Filtra filmes por rating mínimo"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
